@@ -1,0 +1,15 @@
+{application, zotonic_mod_driebit_base, [
+    {description, "Project specific Zotonic module for ginger compatibility."},
+    {vsn, git},
+    {registered, []},
+    {applications, [
+        kernel, stdlib, zotonic_core
+    ]},
+    {env, []},
+    {modules, []},
+    {doc, "doc"},
+    {licenses, ["Apache-2.0"]},
+    {links, [
+        {"Website", "https://driebit.nl/"}
+    ]}
+]}.
