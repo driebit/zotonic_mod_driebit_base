@@ -17,13 +17,21 @@ background_position(Id, Context) ->
     end.
 
 get_position(Id, CropCenter, Context) ->
-    [X,Y] = binary:split(z_convert:to_binary(CropCenter), <<"+">>),
-    case m_media:get(Id, Context) of
-        #{
-            <<"width">> := Width,
-            <<"height">> := Height
-        } when is_integer(Width), is_integer(Height) ->
-            get_background_position(z_convert:to_integer(X), z_convert:to_integer(Y), Width, Height, Context);
+    case binary:split(z_convert:to_binary(CropCenter), <<"+">>, [ global, trim_all ]) of
+        [X,Y] ->
+            case m_media:get(Id, Context) of
+                #{
+                    <<"width">> := Width,
+                    <<"height">> := Height
+                } when is_integer(Width), is_integer(Height) ->
+                    try
+                        get_background_position(z_convert:to_integer(X), z_convert:to_integer(Y), Width, Height, Context)
+                    catch _:_ ->
+                        <<"center center">>
+                    end;
+                _ ->
+                    <<"center center">>
+            end;
         _ ->
             <<"center center">>
     end.
@@ -33,6 +41,10 @@ get_background_position(_X, _Y, undefined, _Height, _Context) ->
 get_background_position(_X, _Y, _Width, undefined, _Context) ->
     <<"center center">>;
 get_background_position(_X, _Y, undefined, undefined, _Context) ->
+    <<"center center">>;
+get_background_position(_X, _Y, 0, _Height, _Context) ->
+    <<"center center">>;
+get_background_position(_X, _Y, _Width, 0, _Context) ->
     <<"center center">>;
 get_background_position(X, Y, Width, Height, _Context) ->
     PX = get_x(X, Width),
