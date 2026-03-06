@@ -3,10 +3,9 @@
 
         <a href="#" id="{{ profile_wire_id }}" class="{{ class }}">
             {% include "avatar/avatar.tpl"
-                id=m.rsc[m.acl.user]
+                id=m.acl.user
                 fallback_rsc_id=m.rsc.custom_avatar_fallback.id
             %}
-
             <span>{{ title }}</span>
         </a>
 

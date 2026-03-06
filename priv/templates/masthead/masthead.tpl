@@ -13,11 +13,11 @@ as
 %}
     {% if id %}
 
-        {% if (id|is_a:"location" or id|is_a:"organization") and (id.address_city or (id.pivot_location_lat and id.pivot_location_lng)) %}
+        {% if (id.is_a.location or id.is_a.organization) and (id.address_city or (id.pivot_location_lat and id.pivot_location_lng)) %}
 
             {% include "map/map-location.tpl" id=id type=maptype main_content_class=main_content_class fallback recenter blackwhite %}
 
-        {% elseif id.category.is_a.location_query %}
+        {% elseif id.is_a.location_query %}
 
             <div class="do_masthead_map masthead--map">
                 {% include "map/map.tpl" id=id type=maptype main_content_class=main_content_class fallback recenter blackwhite result=result container=container %}
@@ -25,31 +25,33 @@ as
 
         {% else %}
 
-            {% if id.depiction.id|is_a:`video` %}
+            {% with id.depiction as depiction %}
+                {% if depiction.id.is_a.video %}
 
-                <div class="masthead--video">
-                    {% include "masthead/video.tpl" dep=id.depiction %}
-                </div>
+                    <div class="masthead--video">
+                        {% include "masthead/video.tpl" dep=depiction %}
+                    </div>
 
-            {% else %}
-
-                {% if id.o.hasbanner[1].depiction.width > 500 or id.o.header[1].depiction.width > 500 %}
-                    {% with id.o.hasbanner[1].depiction.id|default:id.o.header[1].depiction.id as dep %}
-                        <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
-                    {% endwith %}
-                {% elseif id.depiction.width > 500 and not (id.category.is_a.person or id.category.is_a.media) %}
-                    {% with id.depiction.id as dep %}
-                        <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
-                    {% endwith %}
-                {% elseif id.s.haspart.o.hasbanner[1].depiction.width > 500 or id.s.haspart[1].depiction.width > 500 %}
-                    {% with id.s.haspart.o.hasbanner[1].depiction.id|default:id.s.haspart[1].depiction.id as dep %}
-                        <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
-                    {% endwith %}
                 {% else %}
-                    <div class="masthead {{ extraClasses }}"></div>
-                {% endif %}
 
-            {% endif %}
+                    {% if id.o.hasbanner[1].depiction.width > 500 or id.o.header[1].depiction.width > 500 %}
+                        {% with id.o.hasbanner[1].depiction.id|default:id.o.header[1].depiction.id as dep %}
+                            <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
+                        {% endwith %}
+                    {% elseif depiction.width > 500 and not (id.is_a.person or id.is_a.media) %}
+                        {% with depiction.id as dep %}
+                            <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
+                        {% endwith %}
+                    {% elseif id.s.haspart.o.hasbanner[1].depiction.width > 500 or id.s.haspart[1].depiction.width > 500 %}
+                        {% with id.s.haspart.o.hasbanner[1].depiction.id|default:id.s.haspart[1].depiction.id as dep %}
+                            <div class="masthead {{ extraClasses }}" style="background-image: url({% image_url dep mediaclass='masthead' crop=dep.crop_center %}); background-size: cover; background-position: {{ dep|background_position }};"></div>
+                        {% endwith %}
+                    {% else %}
+                        <div class="masthead {{ extraClasses }}"></div>
+                    {% endif %}
+
+                {% endif %}
+            {% endwith %}
 
         {% endif %}
 
