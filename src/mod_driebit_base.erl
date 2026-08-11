@@ -53,6 +53,9 @@ manage_schema(_Version, _Context) ->
             ]}
         ],
         resources = [
+            {acl_user_group_moderators, acl_user_group, [
+                {title, {trans, [{en, "Moderators"}, {nl, "Moderatoren"}]}}
+            ]},
             {editor_dev, person, [
                 {title, "Redacteur"},
                 {name_first, "Redacteur"},
